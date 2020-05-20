@@ -70,7 +70,7 @@ exports.followUser = async function(req, res, next) {
                                 });
                                 }
                             
-                                currentUser = await User.update({_id: currentUserId},{$addToSet: {following: user.id}},{new: true});
+                                currentUser = await User.findByIdAndUpdate(currentUserId,{$addToSet: {following: user.id}},{new: true});
                             
                             
                                 res.json({
@@ -95,3 +95,30 @@ exports.followUser = async function(req, res, next) {
                             next(error);
                         }
                     };
+
+exports.unfollowUser =  async function(req, res, next) {
+  
+                            try {
+                                var token = req.user.token;
+                                var currentUserId = req.user.userId;
+                        
+                                var user = await User.findOneAndUpdate({username : req.params.username}, {$pull: {follower : currentUserId}});
+                                
+                        
+                                var currentUser = await User.findByIdAndUpdate(currentUserId, {$pull: {following: user.id}});
+                        
+                                res.json({                    
+                                "profile": {
+                                    "username": user.username,
+                                    "bio": user.bio,
+                                    "image": user.image,
+                                    "following": user.follower.includes(currentUserId)
+                                }
+                                
+                                })
+                            
+                            
+                            } catch (error) {
+                                next(error);
+                            }
+                        };
