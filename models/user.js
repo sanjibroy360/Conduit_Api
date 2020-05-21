@@ -27,6 +27,8 @@ var userSchema = new Schema({
     follower: [String],
     following: [String],
 
+    favoritedArticles : [String],
+
     password : {
         type: String,
         maxlength: 20,

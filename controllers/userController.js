@@ -122,3 +122,23 @@ exports.unfollowUser =  async function(req, res, next) {
                                 next(error);
                             }
                         };
+
+
+exports.updateUser  =   async function(req, res, next) {
+                            try {
+                                console.log("Body: ",req.body);
+                                var updatedUser = await User.findByIdAndUpdate(req.user.userId, req.body, {new: true});
+                                res.json({
+                                    "user": {
+                                        "email": updatedUser.email,
+                                        "token": req.user.token,
+                                        "username": updatedUser.username,
+                                        "bio": updatedUser.bio,
+                                        "image": updatedUser.image
+                                    }
+                                })
+                        
+                            } catch (error) {
+                                next(error);    
+                            }
+                        };
