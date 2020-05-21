@@ -1,28 +1,35 @@
 var express = require("express");
 var router = express.Router();
+
+// Models
+
 var Article = require('../models/article');
 var User = require("../models/user");
+
+// Middleware 
+
 var auth = require("../middleware/auth");
 
-router.post('/', auth.verifyToken  ,async function(req, res, next) {
-    
-    try {
+// Controller
 
-        req.body.author = req.user.userId; 
-        var article = await Article.create(req.body);
+var articleController = require('../controllers/articleController');
 
-        res.json(
-           article.articleResponse(req.user.userId) 
-        );
-        
-    } catch (error) {
-        next(error);
-    }
+// routes
 
-})
+router.post('/', auth.verifyToken, articleController.createArticle);
 
+router.get('/feed', auth.verifyToken, articleController.getFeed);
+
+router.put('/:slug', auth.verifyToken, articleController.updateArticle);
+
+router.post('/:slug/favorite', auth.verifyToken, articleController.favouriteArticle);
+
+router.delete('/:slug/favorite', auth.verifyToken, articleController.unfavouriteArticle);
+
+router.delete('/:slug', auth.verifyToken, articleController.deleteArticle)
+
+router.get('/:slug', auth.verifyToken, articleController.getArticle);
 
 module.exports = router;
 
 
-// reettik token : eyJhbGciOiJIUzI1NiJ9.NWVjNjkxZjBkNDA5NWExOGE3MzY1MmQy.0DPApmVG3LaIIk0fpQvheF0YnQhGI8lAo2QqYGqwJFQ

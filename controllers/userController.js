@@ -1,4 +1,5 @@
 var User = require('../models/user');
+var Article = require('../models/article');
 var auth = require('../middleware/auth');
 
 exports.registerUser =  async function(req, res, next) {
@@ -108,14 +109,14 @@ exports.unfollowUser =  async function(req, res, next) {
                                 var currentUser = await User.findByIdAndUpdate(currentUserId, {$pull: {following: user.id}});
                         
                                 res.json({                    
-                                "profile": {
-                                    "username": user.username,
-                                    "bio": user.bio,
-                                    "image": user.image,
-                                    "following": user.follower.includes(currentUserId)
-                                }
+                                    "profile": {
+                                        "username": user.username,
+                                        "bio": user.bio,
+                                        "image": user.image,
+                                        "following": user.follower.includes(currentUserId)
+                                    }
                                 
-                                })
+                                });
                             
                             
                             } catch (error) {
@@ -140,5 +141,22 @@ exports.updateUser  =   async function(req, res, next) {
                         
                             } catch (error) {
                                 next(error);    
+                            }
+                        };
+
+exports.getCurrentUser = async function(req, res, next) {
+                            try {
+                            var user = await User.findById(req.user.userId);
+                            return res.status(200).json({
+                                    "user": {
+                                        email: user.email,
+                                        username: user.username,
+                                        token: req.user.token,
+                                        bio: user.bio,
+                                        image: user.image
+                                    }
+                                    });
+                            } catch (error) {
+                                next(error);
                             }
                         };

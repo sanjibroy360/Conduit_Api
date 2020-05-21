@@ -24,10 +24,10 @@ var articleSchema = new Schema({
         required: true,
     },
 
-    tagList : {
-        type : [String],
+    tagList : [{
+        type : String,
         lowercase : true 
-    },
+    }],
 
     author: {
         type: Schema.Types.ObjectId,
@@ -36,7 +36,8 @@ var articleSchema = new Schema({
     },
 
     favoritedBy : [{
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: "User",
         default: ''
     }],
 
@@ -53,13 +54,21 @@ articleSchema.pre("save", async function(next) {
    }
 });
 
-articleSchema.methods.articleResponse = function (userId){
-    var article = this.article;
-    console.log(article);
+articleSchema.methods.articleResponse = function (article, userId) {
+    
     var obj =  {
-                    article,
-                    favorited : article.favoritedBy.includes(userId),
-                    favoritesCount : article.favoritedBy.length
+                   "article": {
+                        "slug": article.slug,
+                        "title": article.title,
+                        "description": article.description,
+                        "body": article.body,
+                        "tagList": article.tagList,
+                        "createdAt": article.createdAt,
+                        "updatedAt": article.updatedAt,
+                        "author": article.author,
+                        "favorited" : this.favoritedBy.includes(userId),
+                        "favoritesCount" : this.favoritedBy.length
+                   }
                };
     
     return obj;

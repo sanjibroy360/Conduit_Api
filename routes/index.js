@@ -10,26 +10,7 @@ var profileController = require('../controllers/profileController');
 
 /* GET home page. */
 
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
-
-router.get('/api/user', auth.verifyToken, async function(req, res, next) {
-  try {
-    var user = User.findById(req.user.userId);
-    return res.status(200).json({
-            "user": {
-              email: user.email,
-              username: user.username,
-              token: req.user.token,
-              bio: user.bio,
-              image: user.image
-            }
-          });
-  } catch (error) {
-      next(error);
-  }
-});
+router.get('/api/user', auth.verifyToken, userController.getCurrentUser);
 
 router.get('/api/profiles/:username', profileController.getProfile);
 

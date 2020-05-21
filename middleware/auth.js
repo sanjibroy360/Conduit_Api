@@ -9,8 +9,6 @@ exports.generateToken = async(user) => {
     } catch (error) {
         return error;
     }
-    
-    
 }
 
 exports.verifyToken = async (req, res, next) => {

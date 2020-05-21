@@ -24,8 +24,17 @@ var userSchema = new Schema({
         type: String,
     },
 
-    follower: [String],
-    following: [String],
+    follower: [{
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        default: ''
+    }],
+
+    following: [{
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        default: ''
+    }],
 
     favoritedArticles : [String],
 
