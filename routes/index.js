@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var User = require('../models/user');
+var Article = require('../models/article');
 var auth = require('../middleware/auth');
 
 // Controller

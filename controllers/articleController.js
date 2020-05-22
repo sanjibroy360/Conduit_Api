@@ -27,7 +27,7 @@ exports.getFeed  =  async function(req, res, next) {
                             var user = await User.findById(req.user.userId);
                             var allArticles = await Article.find({author: {$in: [user.following] }})
                                 .sort({updatedAt: -1}) //1=> asc, -1=> desc
-                                .limit(2);
+                                .limit(5);
 
                             res.json(allArticles);
                         } catch (error) {

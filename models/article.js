@@ -41,6 +41,11 @@ var articleSchema = new Schema({
         default: ''
     }],
 
+    comments : [{
+        type: Schema.Types.ObjectId,
+        ref: "Comment",
+        default: ''
+    }]
 
 }, {timestamps : true});
 

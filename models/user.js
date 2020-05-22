@@ -8,7 +8,7 @@ var userSchema = new Schema({
         required: true,
         unique: true
     },
-    
+
     username : {
         type: String,
         required: true,
@@ -42,7 +42,7 @@ var userSchema = new Schema({
         type: String,
         maxlength: 20,
         required: true
-    }
+    },
 
 }, {timestamps: true});
 

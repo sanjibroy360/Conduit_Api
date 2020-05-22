@@ -18,6 +18,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var articleRouter = require('./routes/articles');
 
+
 var app = express();
 
 app.use(logger('dev'));
@@ -29,5 +30,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/articles', articleRouter);
+
 
 module.exports = app;
