@@ -60,10 +60,11 @@ articleSchema.pre("save", async function(next) {
    }
 });
 
-articleSchema.methods.updateSlug =  async function(article) {   
+articleSchema.methods.updateSlug =  async function(title, article) {   
                                         try {
                                             user = await User.findById(article.author);
-                                            return await article.title.split(' ').join('-') +"-"+ user.username +"-"+article.id.toString().slice(-4);
+                                            return await title.split(' ').join('-') +"-"+ user.username +"-"+article.id.toString().slice(-4);
+                                           
                                         } catch (error) {
                                             return error
                                         }

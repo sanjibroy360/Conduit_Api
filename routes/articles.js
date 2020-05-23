@@ -57,7 +57,6 @@ router.get('/', async function(req, res, next) {
 
                 filteredArticle = await Article.find({favoritedBy : {$in : [user.id]}},"-comments")                                           
                                                .populate("author","username bio image")
-                                              
                                                .sort({updatedAt : -1})
                                                .limit(noOfdata);
 
