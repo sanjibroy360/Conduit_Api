@@ -16,6 +16,67 @@ var articleController = require('../controllers/articleController');
 
 // routes
 
+router.get('/', async function(req, res, next) {
+    
+    try {
+        var filteredArticle = {};
+        var noOfdata = req.query.limit || 20;
+
+        console.log("Query: ", req.query.tag);
+
+        if(req.query.tag) {
+
+            filteredArticle = await Article.find({tagList: {$in: [req.query.tag] }})
+                                           .populate("author","username bio image")
+                                           .sort({updatedAt : -1})
+                                           .limit(noOfdata);
+
+        } else if(req.query.author) {
+
+            var author = await User.findOne({username : req.query.author});
+            
+            if(author) {
+
+                filteredArticle = await Article.find({author: author.id})
+                                                .populate("author","username bio image")                
+                                               .sort({updatedAt : -1})
+                                               .limit(noOfdata);
+
+            } else {
+                res.json({
+                    success: false,
+                    error: "Please, enter a valid author"
+                })
+            }
+
+        } else if(req.query.favorited) {
+            
+            var user = await User.findOne({username : req.query.favorited});
+            
+            if(user) {
+
+                filteredArticle = await Article.find({favoritedBy : {$in : [user.id]}},"-comments")                                           
+                                               .populate("author","username bio image")
+                                              
+                                               .sort({updatedAt : -1})
+                                               .limit(noOfdata);
+
+            } else {
+                res.json({
+                    success: false,
+                    error: "Please, enter a valid username"
+                })
+            }
+
+        }
+
+        res.json({filteredArticle});
+
+    } catch (error) {
+        next(error);
+    }
+})
+
 router.post('/', auth.verifyToken, articleController.createArticle);
 
 router.get('/feed', auth.verifyToken, articleController.getFeed);
@@ -29,6 +90,9 @@ router.delete('/:slug/favorite', auth.verifyToken, articleController.unfavourite
 router.delete('/:slug', auth.verifyToken, articleController.deleteArticle);
 
 router.get('/:slug', auth.verifyToken, articleController.getArticle);
+
+
+
 
 // Comments
 
@@ -104,15 +168,14 @@ router.delete('/:slug/comments/:id', auth.verifyToken, async function (req, res,
     } catch (error) {
         next(error);
     }
-})
+});
+
 
 module.exports = router;
 
 
-// reettik token : eyJhbGciOiJIUzI1NiJ9.NWVjNjkxZjBkNDA5NWExOGE3MzY1MmQy.0DPApmVG3LaIIk0fpQvheF0YnQhGI8lAo2QqYGqwJFQ
+// sanjibroy360 :  eyJhbGciOiJIUzI1NiJ9.NWVjN2EwZTBkZDM4NTcyNWYwNDFjZDZh.4kjegYUOPuiZGl3YeYh8ZNchPhO0Nw96v2bMZU3ufuY
 
+// reettik : eyJhbGciOiJIUzI1NiJ9.NWVjN2ExMWU5Y2I1MzgyNjViZmZlYzc1.ByMukR0AEyE4bUy0E8Qnmu73lZe6o6Tr51DCNfKIMHQ
 
-// jayanta token: eyJhbGciOiJIUzI1NiJ9.NWVjNmQyYjM1MGI1ZTk2OWU5MjQ5MmU0.bOXlvLcoq_OgumcCcqypz7jXEkoEirobo91CNZwjD0Y
-
-
-// localhost:3000/api/articles/how-to-train-your-dragon-reettik97-69f7
+// sayan : eyJhbGciOiJIUzI1NiJ9.NWVjN2ExM2UyZDY3NWQyNjhiMzFiM2Fj.CRMyeotSxZuv3ln7EuukdUjaaJHcy78YJtdqXJyTAVg

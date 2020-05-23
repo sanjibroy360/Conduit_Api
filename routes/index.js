@@ -8,6 +8,7 @@ var auth = require('../middleware/auth');
 
 var userController = require('../controllers/userController');
 var profileController = require('../controllers/profileController');
+var articleController = require('../controllers/articleController');
 
 /* GET home page. */
 
@@ -19,7 +20,9 @@ router.post('/api/profiles/:username/follow', auth.verifyToken, userController.f
 
 router.delete('/api/profiles/:username/follow', auth.verifyToken, userController.unfollowUser);
 
-router.put('/api/user', auth.verifyToken, userController.updateUser)
+router.put('/api/user', auth.verifyToken, userController.updateUser);
+
+router.get('/api/tags', articleController.getAllTags);
 
 
 module.exports = router;

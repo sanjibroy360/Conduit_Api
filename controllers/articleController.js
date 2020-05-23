@@ -37,9 +37,25 @@ exports.getFeed  =  async function(req, res, next) {
 
 exports.updateArticle = async function(req, res, next) {
                             try {
-                                var updatedArticle = await Article.findOneAndUpdate({slug: req.params.slug, author: req.user.userId}, req.body, {new: true});
 
-                                res.json(updatedArticle.articleResponse(updatedArticle, req.user.userId))
+                                var article = await Article.findOne({slug: req.params.slug, author: req.user.userId});
+
+                                console.log("Slug: ",req.params.slug);
+                                console.log("Current User: ",req.user.userId);
+                                console.log("Check: ", req.user.userId == article.author);
+
+                                console.log("Title check: ", article.title != req.body.title)
+
+                                if(article) {
+
+                                    if(article.title != req.body.title) {
+                                        req.body.slug = await article.updateSlug(article);
+                                    }
+
+                                    var updatedArticle = await Article.findOneAndUpdate({slug: req.params.slug, author: req.user.userId}, req.body, {new: true});
+
+                                    res.json(updatedArticle.articleResponse(updatedArticle, req.user.userId))
+                                }
                             } catch (error) {
                                 next(error);
                             }
@@ -97,11 +113,24 @@ exports.deleteArticle = async function (req, res, next) {
                         };
 
 exports.getArticle = async function(req, res, next) {
-                                try {
-                                    var article = await Article.findOne({slug: req.params.slug})
-                                                        .populate("author", "username email bio image");
-                                    res.json(article.articleResponse(article, req.user.userId));
-                                } catch (error) {
-                                    next(error);
-                                }
-                            }
+                        try {
+                            var article = await Article.findOne({slug: req.params.slug})
+                                                // .populate("author", "username email bio image");
+                            res.json(article.articleResponse(article, req.user.userId));
+                        } catch (error) {
+                            next(error);
+                        }
+                    };
+
+exports.getAllTags = async function(req, res, next) {
+                        try {
+                            var filteredArticle = await  Article.find({},"tagList");
+                            var allTags = filteredArticle.map(obj => obj.tagList).flat();
+
+                            res.json({
+                                "tags" : allTags
+                            });
+                        } catch (error) {
+                            next(error);
+                        }
+                    };

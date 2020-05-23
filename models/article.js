@@ -54,10 +54,21 @@ articleSchema.pre("save", async function(next) {
    try {
         user = await User.findById(this.author);
         this.slug = this.title.split(' ').join('-') +"-"+ user.username +"-"+this._id.toString().slice(-4);
+        next()
    } catch (error) {
         next(error);
    }
 });
+
+articleSchema.methods.updateSlug =  async function(article) {   
+                                        try {
+                                            user = await User.findById(article.author);
+                                            return await article.title.split(' ').join('-') +"-"+ user.username +"-"+article.id.toString().slice(-4);
+                                        } catch (error) {
+                                            return error
+                                        }
+                                            
+                                    };
 
 articleSchema.methods.articleResponse = function (article, userId) {
     
