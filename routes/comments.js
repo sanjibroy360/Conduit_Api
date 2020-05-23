@@ -6,8 +6,7 @@
 // var Article = require('../models/article');
 // var Comment = require('../models/comment');
 
-
-// // Middleware 
+// // Middleware
 // var auth = require("../middleware/auth");
 
 // // Controller
@@ -21,7 +20,6 @@
 // router.get('/', auth.verifyToken, commentController.getComment);
 
 // router.delete('/:id', auth.verifyToken, commentController.deleteComment);
-
 
 // // Export
 // module.exports = router;
