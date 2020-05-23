@@ -16,65 +16,7 @@ var articleController = require('../controllers/articleController');
 
 // routes
 
-router.get('/', async function(req, res, next) {
-    
-    try {
-        var filteredArticle = {};
-        var noOfdata = req.query.limit || 20;
-
-        console.log("Query: ", req.query.tag);
-
-        if(req.query.tag) {
-
-            filteredArticle = await Article.find({tagList: {$in: [req.query.tag] }})
-                                           .populate("author","username bio image")
-                                           .sort({updatedAt : -1})
-                                           .limit(noOfdata);
-
-        } else if(req.query.author) {
-
-            var author = await User.findOne({username : req.query.author});
-            
-            if(author) {
-
-                filteredArticle = await Article.find({author: author.id})
-                                                .populate("author","username bio image")                
-                                               .sort({updatedAt : -1})
-                                               .limit(noOfdata);
-
-            } else {
-                res.json({
-                    success: false,
-                    error: "Please, enter a valid author"
-                })
-            }
-
-        } else if(req.query.favorited) {
-            
-            var user = await User.findOne({username : req.query.favorited});
-            
-            if(user) {
-
-                filteredArticle = await Article.find({favoritedBy : {$in : [user.id]}},"-comments")                                           
-                                               .populate("author","username bio image")
-                                               .sort({updatedAt : -1})
-                                               .limit(noOfdata);
-
-            } else {
-                res.json({
-                    success: false,
-                    error: "Please, enter a valid username"
-                })
-            }
-
-        }
-
-        res.json({filteredArticle});
-
-    } catch (error) {
-        next(error);
-    }
-})
+router.get('/', articleController.getFilteredListOfArticles)
 
 router.post('/', auth.verifyToken, articleController.createArticle);
 
