@@ -11,7 +11,7 @@ var Comment = require('../models/comment');
 var auth = require("../middleware/auth");
 
 // Controller
-// var commentController = require('../controllers/commentController');
+var commentController = require('../controllers/commentController');
 var articleController = require('../controllers/articleController');
 
 // routes
@@ -95,86 +95,15 @@ router.get('/:slug', auth.verifyToken, articleController.getArticle);
 
 // Comments
 
-router.post('/:slug/comments', auth.verifyToken, async function (req, res, next) {
-
-    try {
-        var articleSlug = req.params.slug;
-        var article = await Article.findOne({ slug: articleSlug });
-
-        req.body.author = req.user.userId;
-        req.body.article = article.slug;
-
-        var comment = await Comment.create(req.body);
-        console.log("Article: ", comment.id);
+router.post('/:slug/comments', auth.verifyToken, commentController.createComment);
 
 
-        article = await article.updateOne({ $push: { comments: comment.id } });
+router.get('/:slug/comments', auth.verifyToken, commentController.getComment);
 
-        comment = await Comment.findOne({ _id: comment.id })
-            .populate("author", "username bio image following");
-
-        res.json(comment.commentResponse(comment));
-
-    } catch (error) {
-        next(error);
-    }
-});
-
-
-router.get('/:slug/comments', auth.verifyToken, async function (req, res, next) {
-    try {
-        var articleSlug = req.params.slug;
-        var allComments = await Comment.find({ article: articleSlug }, "-article")
-            .populate("author");
-
-        res.json({
-            "comments": allComments
-        });
-
-    } catch (error) {
-        next(error);
-    }
-});
-
-router.delete('/:slug/comments/:id', auth.verifyToken, async function (req, res, next) {
-    console.log("in comment", req.params.id)
-    try {
-        var comment = await Comment.findById(req.params.id);
-
-        console.log(comment);
-        console.log("Author: ", comment.author);
-
-        console.log("Current User: ", req.user.userId);
-
-        if (comment.author.toString() == req.user.userId.toString()) {
-           let deletedComment = await Comment.findByIdAndDelete(req.params.id);
-
-            var updatedArticle = await Article.findOneAndUpdate({ slug: req.params.slug }, { $pull: { comments: req.params.id } });
-
-            res.json({
-                success: true,
-                msg: "User deleted successfully!"
-            });
-
-        }
-
-        res.json({
-            success: false,
-            msg: "Only author can delete article!"
-        });
-
-
-    } catch (error) {
-        next(error);
-    }
-});
+router.delete('/:slug/comments/:id', auth.verifyToken, commentController.deleteComment);
 
 
 module.exports = router;
 
 
-// sanjibroy360 :  eyJhbGciOiJIUzI1NiJ9.NWVjN2EwZTBkZDM4NTcyNWYwNDFjZDZh.4kjegYUOPuiZGl3YeYh8ZNchPhO0Nw96v2bMZU3ufuY
 
-// reettik : eyJhbGciOiJIUzI1NiJ9.NWVjN2ExMWU5Y2I1MzgyNjViZmZlYzc1.ByMukR0AEyE4bUy0E8Qnmu73lZe6o6Tr51DCNfKIMHQ
-
-// sayan : eyJhbGciOiJIUzI1NiJ9.NWVjN2ExM2UyZDY3NWQyNjhiMzFiM2Fj.CRMyeotSxZuv3ln7EuukdUjaaJHcy78YJtdqXJyTAVg
