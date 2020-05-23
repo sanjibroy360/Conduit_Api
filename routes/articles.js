@@ -6,6 +6,8 @@ var User = require("../models/user");
 var Article = require('../models/article');
 var Comment = require('../models/comment');
 
+var commentRouter = require('./comments');
+
 
 // Middleware 
 var auth = require("../middleware/auth");
@@ -33,9 +35,9 @@ router.delete('/:slug', auth.verifyToken, articleController.deleteArticle);
 router.get('/:slug', auth.verifyToken, articleController.getArticle);
 
 
-
-
 // Comments
+
+// router.use('/:slug/comments', commentRouter);
 
 router.post('/:slug/comments', auth.verifyToken, commentController.createComment);
 

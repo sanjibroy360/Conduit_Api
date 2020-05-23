@@ -8,8 +8,11 @@ var auth = require('../middleware/auth');
 exports.createComment = async function (req, res, next) {
 
                             try {
+                                
                                 var articleSlug = req.params.slug;
                                 var article = await Article.findOne({ slug: articleSlug });
+
+                                console.log("Comment Slug : ", articleSlug);
 
                                 req.body.author = req.user.userId;
                                 req.body.article = article.slug;
