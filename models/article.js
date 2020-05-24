@@ -6,36 +6,38 @@ var articleSchema = new Schema(
   {
     slug: {
       type: String,
-      unique: true,
+      required: [true, "'slug' is required"],
       lowercase: true,
     },
 
     title: {
       type: String,
-      required: true,
+      required: [true, "'title' is required"],
     },
 
     description: {
       type: String,
-      required: true,
+      required: [true, "'Description' is required"],
     },
 
     body: {
       type: String,
-      required: true,
+      required: [true, "'Body' is required"],
     },
 
     tagList: [
       {
         type: String,
         lowercase: true,
+        trim: true
       },
     ],
 
     author: {
       type: Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: [true, "'Author' is required"],
+
     },
 
     favoritedBy: [

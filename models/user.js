@@ -6,14 +6,17 @@ var userSchema = new Schema(
   {
     email: {
       type: String,
-      required: true,
+      required: [true, "'Email' is required"],
       unique: true,
+      trim: true,
+      lowercase: true
     },
 
     username: {
       type: String,
-      required: true,
+      required: [true, "'username' is required"],
       unique: true,
+      trim: true
     },
 
     bio: {
@@ -46,7 +49,7 @@ var userSchema = new Schema(
     password: {
       type: String,
       maxlength: 20,
-      required: true,
+      required: [true, "'Password' is required"]
     },
   },
   { timestamps: true }
