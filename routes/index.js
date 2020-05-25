@@ -10,7 +10,7 @@ var userController = require("../controllers/userController");
 var profileController = require("../controllers/profileController");
 var articleController = require("../controllers/articleController");
 
-/* GET home page. */
+/* GET home page */
 
 router.get("/api/user", auth.verifyToken, userController.getCurrentUser);
 
