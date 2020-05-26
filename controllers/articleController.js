@@ -146,9 +146,7 @@ exports.getArticle = async function (req, res, next) {
 
 exports.getAllTags = async function (req, res, next) {
   try {
-    var filteredArticle = await Article.find({}, "tagList");
-    var allTags = filteredArticle.map((obj) => obj.tagList).flat();
-
+    var allTags = await Article.find({}).distinct("tagList");
     res.json({
       tags: allTags,
     });
@@ -159,24 +157,16 @@ exports.getAllTags = async function (req, res, next) {
 
 exports.getFilteredListOfArticles = async function (req, res, next) {
   try {
-    var filteredArticle = {};
+    var filter = {};
     var noOfdata = req.query.limit || 20;
 
     if (req.query.tag) {
-      filteredArticle = await Article.find({
-        tagList: { $in: [req.query.tag] },
-      })
-        .populate("author", "username bio image")
-        .sort({ updatedAt: -1 })
-        .limit(noOfdata);
+      filter.tagList = req.query.tag;
     } else if (req.query.author) {
       var author = await User.findOne({ username: req.query.author });
 
       if (author) {
-        filteredArticle = await Article.find({ author: author.id })
-          .populate("author", "username bio image")
-          .sort({ updatedAt: -1 })
-          .limit(noOfdata);
+        filter.author = author.id;
       } else {
         res.json({
           success: false,
@@ -187,13 +177,7 @@ exports.getFilteredListOfArticles = async function (req, res, next) {
       var user = await User.findOne({ username: req.query.favorited });
 
       if (user) {
-        filteredArticle = await Article.find(
-          { favoritedBy: { $in: [user.id] } },
-          "-comments"
-        )
-          .populate("author", "username bio image")
-          .sort({ updatedAt: -1 })
-          .limit(noOfdata);
+        filter.favoritedBy = user.id;
       } else {
         res.json({
           success: false,
@@ -201,6 +185,11 @@ exports.getFilteredListOfArticles = async function (req, res, next) {
         });
       }
     }
+
+    var filteredArticle = await Article.find(filter)
+      .populate("author", "username bio image")
+      .sort({ updatedAt: -1 })
+      .limit(noOfdata);
 
     res.json({ filteredArticle });
   } catch (error) {

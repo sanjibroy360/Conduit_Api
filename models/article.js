@@ -6,7 +6,6 @@ var articleSchema = new Schema(
   {
     slug: {
       type: String,
-      required: [true, "'slug' is required"],
       lowercase: true,
     },
 
@@ -29,7 +28,7 @@ var articleSchema = new Schema(
       {
         type: String,
         lowercase: true,
-        trim: true
+        trim: true,
       },
     ],
 
@@ -37,7 +36,6 @@ var articleSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
       required: [true, "'Author' is required"],
-
     },
 
     favoritedBy: [
@@ -61,6 +59,7 @@ var articleSchema = new Schema(
 
 articleSchema.pre("save", async function (next) {
   try {
+    console.log("Slug beginning: ", this.slug);
     user = await User.findById(this.author);
     this.slug =
       this.title.split(" ").join("-") +
@@ -68,6 +67,8 @@ articleSchema.pre("save", async function (next) {
       user.username +
       "-" +
       this._id.toString().slice(-4);
+    console.log("Slug end: ", this.slug);
+
     next();
   } catch (error) {
     next(error);

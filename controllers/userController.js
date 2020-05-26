@@ -30,7 +30,6 @@ exports.userLogin = async function (req, res, next) {
     var token = await auth.generateToken(user);
 
     if (!user) return res.status(400).json("Invalid Email!");
-    update
     if (user.verifyPassword(password)) {
       res.json({
         user: {

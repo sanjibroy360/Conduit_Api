@@ -6,16 +6,16 @@ var commentSchema = new Schema(
   {
     body: {
       type: String,
-      required: [true, "Comment body is required"]
+      required: [true, "Comment body is required"],
     },
     author: {
       type: Schema.Types.ObjectId,
       ref: "User",
-      required: [true,"'Author' is required'"]
+      required: [true, "'Author' is required'"],
     },
     article: {
       type: String,
-      required: [true, "Article's slug is required"]
+      required: [true, "Article's slug is required"],
     },
   },
   { timestamps: true }
